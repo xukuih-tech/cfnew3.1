@@ -1687,6 +1687,20 @@ document.addEventListener('DOMContentLoaded', function () {
         status: 500
       });
     }
+  },
+  async scheduled(事件, 环境) {
+    try {
+      await 处理值键值值(环境 || {});
+      if (!键值存储) return;
+      await 加载键值配置(true);
+      // 强制拉取源数据并写入KV，订阅请求后续直接读取缓存。
+      await Promise.all([
+        获取值地址列表(true),
+        获取值解析新地址列表(true)
+      ]);
+    } catch (错误) {
+      // 定时刷新失败时不覆盖旧缓存；下一轮或订阅请求仍可继续使用上一份数据。
+    }
   }
 };
 function 生成值配置654(链接列表653) {
@@ -3024,6 +3038,24 @@ async function 处理订阅请求(请求507, 用户506, 网址505 = null) {
     const 错误链接 = `${协议484}://00000000-0000-0000-0000-000000000000@127.0.0.1:80?encryption=none&security=none&type=ws&host=error.com&path=%2F#${encodeURIComponent(错误备注)}`;
     最终链接列表.push(错误链接);
   }
+  // Shadowrocket 第一阶段：最多输出20个不同的服务器端点。
+  // 当前没有客户端代理隧道测速结果，因此不虚构速度排名，保持原始候选顺序。
+  const 已见端点 = new Set();
+  const 前20节点 = [];
+  for (const 节点链接 of 最终链接列表) {
+    try {
+      const 节点网址 = new URL(节点链接);
+      const 端点键 = `${节点网址.hostname.toLowerCase()}:${节点网址.port || '443'}`;
+      if (已见端点.has(端点键)) continue;
+      已见端点.add(端点键);
+      前20节点.push(节点链接);
+      if (前20节点.length >= 20) break;
+    } catch (错误) {}
+  }
+  if (前20节点.length > 0) {
+    最终链接列表.length = 0;
+    最终链接列表.push(...前20节点);
+  }
   let 订阅内容;
   let 内容类型483 = 'text/plain; charset=utf-8';
   switch (目标503.toLowerCase()) {
@@ -3269,7 +3301,30 @@ async function 计算值摘要(文本434) {
   const 缓冲区434 = await crypto.subtle.digest('MD5', new TextEncoder().encode(文本434));
   return Array.from(new Uint8Array(缓冲区434)).map(字节434 => 字节434.toString(16).padStart(2, '0')).join('');
 }
-async function 获取值地址列表() {
+// 智能节点候选缓存：Cron 每20分钟刷新；订阅请求优先读取缓存。
+// 注意：Worker 不运行代理隧道，因此这里缓存的是候选源，不伪称为真实下载测速结果。
+const 智能节点缓存期限 = 25 * 60 * 1000;
+async function 读取智能节点缓存(键) {
+  if (!键值存储) return null;
+  try {
+    const 原始值 = await 键值存储.get(键);
+    if (!原始值) return null;
+    const 数据 = JSON.parse(原始值);
+    if (!数据 || !Array.isArray(数据.items) || !数据.updatedAt) return null;
+    if (Date.now() - 数据.updatedAt > 智能节点缓存期限) return null;
+    return 数据.items;
+  } catch (错误) {
+    return null;
+  }
+}
+async function 保存智能节点缓存(键, items) {
+  if (!键值存储 || !Array.isArray(items) || items.length === 0) return;
+  try {
+    await 键值存储.put(键, JSON.stringify({ updatedAt: Date.now(), items }));
+  } catch (错误) {}
+}
+async function 获取值地址列表(强制刷新 = false) {
+  if (!强制刷新) { const 缓存列表 = await 读取智能节点缓存('smart_candidates_api'); if (缓存列表) return 缓存列表; }
   const 分组线路映射 = {
     ctcc: '电信',
     cucc: '联通',
@@ -3316,6 +3371,7 @@ async function 获取值地址列表() {
         });
       }
     }
+    await 保存智能节点缓存('smart_candidates_api', 结果列表433);
     return 结果列表433;
   } catch (事件值427) {}
   return [];
@@ -8651,7 +8707,8 @@ function 处理格式值(本地值114, 偏移 = 0) {
   if (!是否有效格式(标识)) throw new TypeError(错误_无效标识字符串);
   return 标识;
 }
-async function 获取值解析新地址列表() {
+async function 获取值解析新地址列表(强制刷新 = false) {
+  if (!强制刷新) { const 缓存列表 = await 读取智能节点缓存('smart_candidates_repo'); if (缓存列表) return 缓存列表; }
   const 网址113 = 优选地址源;
   try {
     const 网址列表112 = 网址113.includes(',') ? 网址113.split(',').map(网址值111 => 网址值111.trim()).filter(网址值 => 网址值) : [网址113];
@@ -8669,6 +8726,7 @@ async function 获取值解析新地址列表() {
           });
         }
       }
+      await 保存智能节点缓存('smart_candidates_repo', 结果列表110);
       return 结果列表110;
     }
     const 响应107 = await fetch(网址113);
@@ -8689,6 +8747,7 @@ async function 获取值解析新地址列表() {
         });
       }
     }
+    await 保存智能节点缓存('smart_candidates_repo', 结果列表105);
     return 结果列表105;
   } catch (错误101) {
     return [];
