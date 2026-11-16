@@ -416,7 +416,7 @@ function 处理值节点别名部分(值785, 回退 = 'Node') {
   return 文本784 || 回退;
 }
 function 是否明确家宽标记(值) {
-  return /(?:🏠|家宽|住宅宽带|住宅IP|residential|home[\\s_-]?broadband|isp[\\s_-]?residential)/i.test(String(值 || ''));
+  return /(?:🏠|家宽|住宅宽带|住宅IP|residential|home[\s_-]?broadband|isp[\s_-]?residential)/i.test(String(值 || ''));
 }
 function 获取值节点别名基础(项目783) {
   const 主机782 = 规范化节点主机(项目783?.ip || 项目783?.domain || '');
@@ -1987,7 +1987,7 @@ function 生成值值589(链接列表588, 本地值587 = {}) {
       '    timeout: 5000',
       '    lazy: true',
       '    proxies:',
-      家宽节点名称.map(名称 => `      - ${处理本地值622(名称)}`).join('\\n')
+      家宽节点名称.map(名称 => `      - ${处理本地值622(名称)}`).join('\n')
     );
   }
   组行列表.push(
@@ -1999,7 +1999,7 @@ function 生成值值589(链接列表588, 本地值587 = {}) {
     '    timeout: 5000',
     '    lazy: true',
     '    proxies:',
-    普通测速节点.map(名称 => `      - ${处理本地值622(名称)}`).join('\\n') || '      - DIRECT',
+    普通测速节点.map(名称 => `      - ${处理本地值622(名称)}`).join('\n') || '      - DIRECT',
     '  - name: "🏠 家宽优先"',
     '    type: fallback',
     '    url: "https://www.gstatic.com/generate_204"',
@@ -2665,7 +2665,7 @@ async function 获取加密客户端问候配置(域名522) {
             const 数据字符串520 = typeof 本地值521.data === 'string' ? 本地值521.data : JSON.stringify(本地值521.data);
             const 加密客户端问候值519 = 数据字符串520.match(/ech=([^\s"']+)/);
             if (加密客户端问候值519 && 加密客户端问候值519[1]) {
-              加密客户端问候调试值 = 调试步骤.join('\\n') + '\\n✅ 成功从 Google DNS 获取 ECH 配置';
+              加密客户端问候调试值 = 调试步骤.join('\n') + '\\n✅ 成功从 Google DNS 获取 ECH 配置';
               return 加密客户端问候值519[1];
             }
             // 如果没有找到，尝试直接使用 data（可能是 base64 编码的）
@@ -2675,7 +2675,7 @@ async function 获取加密客户端问候配置(域名522) {
                 调试步骤.push(`尝试 base64 解码，解码后长度: ${已解码518.length}`);
                 const 已解码值517 = 已解码518.match(/ech=([^\s"']+)/);
                 if (已解码值517 && 已解码值517[1]) {
-                  加密客户端问候调试值 = 调试步骤.join('\\n') + '\\n✅ 成功从 Google DNS (base64解码) 获取 ECH 配置';
+                  加密客户端问候调试值 = 调试步骤.join('\n') + '\\n✅ 成功从 Google DNS (base64解码) 获取 ECH 配置';
                   return 已解码值517[1];
                 }
               } catch (事件值516) {
@@ -2710,7 +2710,7 @@ async function 获取加密客户端问候配置(域名522) {
             const 数据字符串 = typeof 本地值513.data === 'string' ? 本地值513.data : JSON.stringify(本地值513.data);
             const 加密客户端问候值512 = 数据字符串.match(/ech=([^\s"']+)/);
             if (加密客户端问候值512 && 加密客户端问候值512[1]) {
-              加密客户端问候调试值 = 调试步骤.join('\\n') + '\\n✅ 成功从 Google DNS (目标域名) 获取 ECH 配置';
+              加密客户端问候调试值 = 调试步骤.join('\n') + '\\n✅ 成功从 Google DNS (目标域名) 获取 ECH 配置';
               return 加密客户端问候值512[1];
             }
             // 尝试 base64 解码
@@ -2718,7 +2718,7 @@ async function 获取加密客户端问候配置(域名522) {
               const 已解码511 = atob(本地值513.data);
               const 已解码值 = 已解码511.match(/ech=([^\s"']+)/);
               if (已解码值 && 已解码值[1]) {
-                加密客户端问候调试值 = 调试步骤.join('\\n') + '\\n✅ 成功从 Google DNS (目标域名, base64解码) 获取 ECH 配置';
+                加密客户端问候调试值 = 调试步骤.join('\n') + '\\n✅ 成功从 Google DNS (目标域名, base64解码) 获取 ECH 配置';
                 return 已解码值[1];
               }
             } catch (事件值510) {
@@ -2751,7 +2751,7 @@ async function 获取加密客户端问候配置(域名522) {
           if (本地值509.data) {
             const 加密客户端问候值 = 本地值509.data.match(/ech=([^\s"']+)/);
             if (加密客户端问候值 && 加密客户端问候值[1]) {
-              加密客户端问候调试值 = 调试步骤.join('\\n') + '\\n✅ 成功从 Cloudflare DNS 获取 ECH 配置';
+              加密客户端问候调试值 = 调试步骤.join('\n') + '\\n✅ 成功从 Cloudflare DNS 获取 ECH 配置';
               return 加密客户端问候值[1];
             }
           }
@@ -2762,10 +2762,10 @@ async function 获取加密客户端问候配置(域名522) {
     } else {
       调试步骤.push(`Cloudflare DNS 请求失败: ${云墙响应.status}`);
     }
-    加密客户端问候调试值 = 调试步骤.join('\\n') + '\\n❌ 所有DNS查询均失败，未获取到ECH配置';
+    加密客户端问候调试值 = 调试步骤.join('\n') + '\\n❌ 所有DNS查询均失败，未获取到ECH配置';
     return null;
   } catch (错误508) {
-    加密客户端问候调试值 = 调试步骤.join('\\n') + '\\n❌ 获取ECH配置时发生错误: ' + 错误508.message;
+    加密客户端问候调试值 = 调试步骤.join('\n') + '\\n❌ 获取ECH配置时发生错误: ' + 错误508.message;
     return null;
   }
 }
